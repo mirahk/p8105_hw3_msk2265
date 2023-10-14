@@ -72,5 +72,13 @@ brfss_state_averages = brfss_df %>%
 ggplot(brfss_state_averages, aes(x=year, y= data_value_average, color = locationabbr)) + geom_line()
 ```
 
-Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State
+**Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State**
+```{r}
+brfss_ny = brfss_df %>% 
+  filter(locationabbr == "NY", year == 2006 | year == 2010)
+
+ggplot(brfss_ny, aes(x=data_value, fill = response)) + 
+  geom_histogram() +
+  facet_grid(. ~ year)
+```
 
