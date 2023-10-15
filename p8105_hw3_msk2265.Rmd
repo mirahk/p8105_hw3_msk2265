@@ -110,7 +110,7 @@ education_level = c("Less than high school", "High school equivalent", "More tha
    filter(age>20)#age less than 21 filtered out so includes 21
  
   
-nhanes_accel = read_csv("./Data/nhanes_accel.csv") %>% 
+nhanes_accel = read_csv("./Data/nhanes_accel.csv", na = "0") %>% #assuming 0 means that no data waas collected at that time point
   janitor::clean_names()
 
 #merging datasets
@@ -134,7 +134,7 @@ nhanes_long_df = (
 ```
 
 
-Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.
+***Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.***
 ```{r}
 #table with number of men and women in each education category
 nhanes_df %>% 
@@ -147,6 +147,19 @@ ggplot(nhanes_df, aes(x=age, fill = sex))+
 ```
 
 
-Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+***Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.***
+```{r}
+#this is easier to do with the wide dataset
+
+nhanes_df = nhanes_df %>% 
+  mutate(activity = rowMeans(select(.,min1:min1440), na.rm=TRUE)) #adding activity row by calculating the average time for each row, ignoring the 0 values that were not collected.
+
+ggplot(nhanes_df, aes(x = age, y = activity, color = sex)) +
+  geom_point(alpha = .5)+
+  geom_smooth(se= FALSE)+
+  facet_grid(.~ education)
+
+```
+
 
 Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
