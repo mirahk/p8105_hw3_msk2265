@@ -5,7 +5,8 @@ date: "`r Sys.Date()`"
 output: github_document
 ---
 
-## Problem 1 
+## Problem 1
+
 ```{r setup, include=FALSE}
 
 library(tidyverse)
@@ -16,11 +17,8 @@ data("brfss_smart2010")
 
 **First, do some data cleaning:**
 
-**format the data to use appropriate variable names;**
-  - **focus on the “Overall Health” topic**
-  - **include only responses from “Excellent” to “Poor”**
-  - **organize responses as a factor taking levels ordered from “Poor” to “Excellent”**
-  
+**format the data to use appropriate variable names;** - **focus on the "Overall Health" topic** - **include only responses from "Excellent" to "Poor"** - **organize responses as a factor taking levels ordered from "Poor" to "Excellent"**
+
 ```{r}
 #cleaning data
 
@@ -55,9 +53,11 @@ brfss_df_2010 = brfss_df %>%
 count(brfss_df_2010) # counting
 
 ```
-In 2002,  there were 3 states that were observed in 7 or more locations, and in 2010 there were 11 states that were observed in 7 or more unique locations. 
 
-**Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a “spaghetti” plot of this average value over time within a state (that is, make a plot showing a line for each state across years – the geom_line geometry and group aesthetic will help).**
+In 2002, there were 3 states that were observed in 7 or more locations, and in 2010 there were 11 states that were observed in 7 or more unique locations.
+
+**Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a "spaghetti" plot of this average value over time within a state (that is, make a plot showing a line for each state across years -- the geom_line geometry and group aesthetic will help).**
+
 ```{r}
 #creating the dataset
 brfss_state_averages = brfss_df %>% 
@@ -72,7 +72,10 @@ brfss_state_averages = brfss_df %>%
 ggplot(brfss_state_averages, aes(x=year, y= data_value_average, color = locationabbr)) + geom_line()
 ```
 
-**Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State**
+The graph above shows the average data value by state by year who responded that their over health was excellent. Although the rang of colors makes it hard to tell, it looks like DC usually had the highest average data value for this survey. WV seems to have the lowest average data values for this group as it is the redish line at the bottom of the graph.
+
+**Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses ("Poor" to "Excellent") among locations in NY State**
+
 ```{r}
 brfss_ny = brfss_df %>% 
   filter(locationabbr == "NY", year == 2006 | year == 2010)
@@ -81,6 +84,8 @@ ggplot(brfss_ny, aes(x=data_value, fill = response)) +
   geom_boxplot() +
   facet_grid(. ~ year)
 ```
+
+The box plots above show the distribution of data values from NY during the years 2006 and 2010. Both years generally have the same distribution pattern, with the highest data values on average being in very good. Though based on the box plots, we can see that the maximum data value for 2006 was good and for 2010 it was very good. Also in 2010 there is a larger distribution of data values for fair and poor, and a smaller distribution for good than there was in 2006.
 
 ## Problem 3
 
@@ -118,7 +123,6 @@ nhanes_accel = read_csv("./Data/nhanes_accel.csv", na = "0") %>% #assuming 0 mea
 nhanes_df = left_join(nhanes_demographic, nhanes_accel, by = "seqn")
 ```
 
-
 ```{r}
 #covert to long data? not sure if this is needed but doing it anyways just in case
 nhanes_long_df = (
@@ -133,8 +137,8 @@ nhanes_long_df = (
 
 ```
 
-
 ***Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.***
+
 ```{r}
 #table with number of men and women in each education category
 nhanes_df %>% 
@@ -146,8 +150,10 @@ ggplot(nhanes_df, aes(x=age, fill = sex))+
   facet_grid(. ~ education)
 ```
 
+The table above clearly shows that the majority of the study participants have an education more than high school. The histograms above show the age range by gender and education. Here we can see that there are women in their 20-40 that have a education higher than high school than men. It also looks like this study recruited from a population of \~80 year old women of different educational background more than other groups. I can also clearly see that the more than high school section of the visual has the most participants
 
 ***Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.***
+
 ```{r}
 #this is easier to do with the wide dataset
 
@@ -161,8 +167,10 @@ ggplot(nhanes_df, aes(x = age, y = activity, color = sex)) +
 
 ```
 
+The plot above shows that MIM activity tends downward with age. However, for the high school equivalent group, there seems to be a trend upwards until around 40, then the MIM activity decreases. For the more than high school, MIM seems stable until around 50. For both high school equivalent and more than high school, female MIM activity tends to be higher
 
-**Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.***
+**Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.**\*
+
 ```{r}
 ggplot(nhanes_long_df, aes(x=minutes, y=MIM, color=sex)) +
   geom_smooth(se= FALSE)+
@@ -171,3 +179,4 @@ ggplot(nhanes_long_df, aes(x=minutes, y=MIM, color=sex)) +
 
 ```
 
+This plot clearly shows that as the day goes on, MIM activity increases and then decreases. It looks like the minimum (based on the graphs and no calculations) is around 250 minutes in all three graphs for both sexes. For the less than high school group, the peak is at around 750, with female higher than male. For the high school equivalent and more than high school there is more of a plateau around 500- 1250. Females are pretty consistently higher
